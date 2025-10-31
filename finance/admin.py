@@ -1,0 +1,19 @@
+from django.contrib import admin
+from .models import Trans, Goal
+from import_export import resources
+from import_export.admin import ExportMixin
+
+class TransResource(resources.ModelResource):
+    class Meta:
+        model = Trans
+        fields = ('id', 'user__username', 'title', 'amount', 'transaction_type', 'date', 'category')
+
+class TransAdmin(ExportMixin, admin.ModelAdmin):
+    resource_class = TransResource
+    list_display = ('title', 'user', 'amount', 'transaction_type', 'date', 'category')
+    list_filter = ('transaction_type', 'category', 'date')
+    search_fields = ('title', 'user__username')
+
+# Register your models here.
+admin.site.register(Trans, TransAdmin)
+admin.site.register(Goal)

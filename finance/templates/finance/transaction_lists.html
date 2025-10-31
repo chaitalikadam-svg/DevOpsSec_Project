@@ -1,0 +1,53 @@
+{%extends "finance/base.html" %}
+{% block title %}Transaction{% endblock title %}
+{% block content %}
+
+<div class="flex justify-end mb-6">
+  <a href="{% url 'export_transactions' %}" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 shadow">
+    Export Transactions to Excel
+  </a>
+</div>
+
+
+<h1 class  = "text-xl font-bold">Transaction List</h1>
+<!--Display transaction-->
+<table class = "min-w-full table-auto border-collapse border-gray-200 mt-4">
+    <thead>
+        <tr class = "bg-gray-200">
+            <th class = "border px-4 py-2 text-left">Title</th>
+            <th class = "border px-4 py-2 text-left">Amount</th>
+            <th class = "border px-4 py-2 text-left">Type</th>
+            <th class = "border px-4 py-2 text-left">Date</th>
+            <th class = "border px-4 py-2 text-left">Category</th>
+            <th class = "border px-4 py-2 text-left">Action</th>
+        </tr>
+    </thead>
+<tbody>
+    {% for transaction in transactions %}
+    <tr class = "hover:bg-gray-200">
+        <td class = "border px-4 py-2">{{ transaction.title }}</td>
+        <td class = "border px-4 py-2">${{ transaction.amount }}</td>
+        <td class = "border px-4 py-2">
+            {% if transaction.transaction_type == 'income' %}
+                <span class="text-green-600 font-bold">Credit</span>
+            {% else %}
+                <span class="text-red-600 font-bold">Debit</span>
+            {% endif %}
+        </td>
+        <td class = "border px-4 py-2">{{ transaction.date }}</td>
+        <td class = "border px-4 py-2">{{ transaction.category }}</td>
+        <!-- Action buttons -->
+        <td class="border px-4 py-2 space-x-2">
+        <a href="{% url 'transaction_edit' transaction.id %}" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 text-sm">
+        Edit
+        </a>
+        <a href="{% url 'transaction_delete' transaction.id %}" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-sm">
+        Delete
+        </a>
+        </td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
+
+{%endblock content %}
