@@ -15,7 +15,7 @@ class Trans(models.Model):
         ('utilities', 'Utilities'),
         ('transportation', 'Transportation'),
         ('health', 'Health'),
-        ('others', 'Others')
+        ('others', 'Others'),
     ]
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)

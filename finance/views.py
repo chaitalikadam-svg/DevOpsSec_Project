@@ -9,7 +9,11 @@ from .models import Trans, Goal
 from django.db.models import Sum
 from .admin import TransResource
 from django.views.generic.edit import UpdateView, DeleteView
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy 
+from django.utils.dateparse import parse_date # to filter out the date for export
+from datetime import date, timedelta
+from decimal import Decimal
+
 
 
 # Create your views here.
@@ -82,9 +86,10 @@ class TransCreateView(LoginRequiredMixin, View):
     
 class TransactionListView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
-        transactions = Trans.objects.filter(user=request.user)
-        return render(request, 'finance/transaction_lists.html' ,
-                                            {'transactions': transactions})
+        transactions = Trans.objects.filter(user=request.user).order_by('-date')
+        return render(request, 'finance/transaction_lists.html', {
+            'transactions': transactions
+        })
     
 class GoalCreateView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
@@ -103,15 +108,49 @@ class GoalCreateView(LoginRequiredMixin, View):
 class ExportTransactionsView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         user_transactions = Trans.objects.filter(user=request.user)
-        transactions_resource = TransResource()
-        dataset = transactions_resource.export(queryset = user_transactions)
 
-        excel_data = dataset.xlsx
+        tx_type = request.GET.getlist('type')
+        category = request.GET.getlist('category')
+        start_date_str = request.GET.get('start_date')
+        end_date_str = request.GET.get('end_date')
 
-        response = HttpResponse(excel_data, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        start_date = parse_date(start_date_str) if start_date_str else None
+        end_date = parse_date(end_date_str) if end_date_str else None
 
-        response['Content-Disposition'] = 'attachment; filename="transactions.xlsx"'
-        return response
+        if tx_type in ['income', 'expense']:
+            user_transactions = user_transactions.filter(transaction_type__in = tx_type)
+        if category:
+            user_transactions = user_transactions.filter(category__in = category)
+        if start_date:
+            user_transactions = user_transactions.filter(date__gte=start_date)
+        if end_date:
+            user_transactions = user_transactions.filter(date__lte=end_date)
+
+        if 'export' in request.GET:
+            transactions_resource = TransResource()
+            dataset = transactions_resource.export(queryset=user_transactions)
+            excel_data = dataset.export('xlsx')
+
+            response = HttpResponse(
+                excel_data,
+                content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            )
+            response['Content-Disposition'] = 'attachment; filename="transactions.xlsx"'
+            return response
+
+        # If not exporting, render the form
+        context = {
+            'transactions': user_transactions,
+            'filters': {
+                'type': tx_type,
+                'category': category,
+                'start_date': start_date_str,
+                'end_date': end_date_str
+            }
+        }
+        return render(request, 'finance/export.html', context)
+
+
 
 class TransactionUpdateView(LoginRequiredMixin, UpdateView):
     model = Trans
@@ -132,8 +171,31 @@ class TransactionDeleteView(LoginRequiredMixin, DeleteView):
     
 class AnalysisView(View):
     def get(self, request, *args, **kwargs):
+        expense_labels = []
+        expense_data = []
+        income_labels = []
+        income_data = []
+        summarise = ""
+        
+        start_date_str = request.GET.get('start_date')
+        end_date_str = request.GET.get('end_date')
+        
+        
+        # Ensure values are strings before parsing
+        start_date = parse_date(str(start_date_str)) if start_date_str else None
+        end_date = parse_date(str(end_date_str)) if end_date_str else None
+        
+        show_charts = bool(start_date and end_date)
+        
         expenses = Trans.objects.filter(user=request.user, transaction_type='expense')
         income = Trans.objects.filter(user=request.user, transaction_type='income')
+
+
+        if start_date:
+            expenses = expenses.filter(date__gte=start_date)
+        if end_date:
+            expenses = expenses.filter(date__lte=end_date)
+        
 
         # Aggregate by category
         category_expenses = expenses.values('category').annotate(total=Sum('amount'))
@@ -144,12 +206,25 @@ class AnalysisView(View):
 
         income_labels = [entry['category'].capitalize() for entry in category_income]
         income_data = [float(entry['total']) for entry in category_income]
+        
+        total_expense = sum(Decimal(entry['total']) for entry in category_expenses)
+
+        if total_expense > 0:
+            summary_parts = [
+                f"{(entry['total'] / total_expense * 100):.2f}% was spent on {entry['category']}"
+                for entry in category_expenses
+            ]
+            summarise = "\n".join(summary_parts)
+        else:
+            summarise = f"No expenses found from {start_date.strftime('%d %B %Y')} to {end_date.strftime('%d %B %Y')}."
 
         context = {
             'expense_labels': expense_labels,
             'expense_data': expense_data,
             'income_labels': income_labels,
             'income_data': income_data,
+            'summarise': summarise,
+            'show_charts': show_charts
         }
         return render(request, 'finance/analysis.html', context)
 

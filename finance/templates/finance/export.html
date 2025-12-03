@@ -1,0 +1,62 @@
+{%extends "finance/base.html" %}
+{% block title %}Export Transactions{% endblock title %}
+
+{% block content %}
+
+<div class = "min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8 bg-gradient-to-r from-[#ef32d9] to-[#89fffd]  p-8 rounded-lg shadow-md">
+        <div class = "text-center">
+            <h1 class = "text-2xl font-bold text-black mb-6"> Export Transaction </h1>
+            <p class = mt-2 text-sm text-gray-600> Filter your statement </p>
+        </div>
+    <form action = "{% url 'export_transactions'%}" class = "" method="get">
+        {% csrf_token %}
+        <div>
+            <label class="block text-black font-bold mb-2" for = "Transaction_type">Type of Transaction</label>
+            <!--<select id="Transaction_type" name="transaction_type[]" multiple class="w-full px-3 py-2 border
+            border-gray-300 rounded-md" focus:outline-none focus:ring-2 focus:ring-blue-500 > -->
+            <label><input type="checkbox" name="transaction_type" value="income"> Income</label><br>
+            <label><input type="checkbox" name="transaction_type" value="expense"> Expense</label>
+            <!--</select> -->
+            {% if form.transaction_type.errors %}
+                <p class="text-red-500 text-sm mt-1">{{ form.transaction_type.errors.0 }}</p>
+            {% endif %}    
+
+            <label class="block text-black font-bold mb-2" for = "id_amount">Select Category</label>
+            <label><input type="checkbox" name="category" value="salary"> Salary </label><br>
+            <label><input type="checkbox" name="category" value="business"> Business</label> <br>
+            <label><input type="checkbox" name="category" value="food"> Food</label><br>
+            <label><input type="checkbox" name="category" value="entertainment"> Entertainment</label> <br>
+            <label><input type="checkbox" name="category" value="utilities"> Utilities</label><br>
+            <label><input type="checkbox" name="category" value="transportation"> Transportation</label> <br>
+            <label><input type="checkbox" name="category" value="health"> Health</label><br>
+            <label><input type="checkbox" name="category" value="others"> Others</label>
+            {% if form.category.errors %}
+                <p class="text-red-500 text-sm mt-1">{{ form.category.errors.0 }}</p>
+            {% endif %}    
+
+            <label class="block text-black font-bold mb-2" for = "start_date">Start Date:</label>
+            <input type="date" id="start_date" name="start_date" class="w-full px-3 py-2 border border-gray-300 rounded-md"
+            focus:outline-none focus:ring-2 focus:ring-blue-500 required>
+            {% if form.date.errors %}
+                <p class="text-red-500 text-sm mt-1">{{ form.date.errors.0 }}</p>
+            {% endif %} 
+            
+            <label class="block text-black font-bold mb-2" for = "end_date"> End Date:</label>
+            <input type="date" id="end_date" name="end_date" class="w-full px-3 py-2 border border-gray-300 rounded-md"
+            focus:outline-none focus:ring-2 focus:ring-blue-500 required>
+            {% if form.date.errors %}
+                <p class="text-red-500 text-sm mt-1">{{ form.date.errors.0 }}</p>
+            {% endif %} 
+
+            <div class="mt-4 text-center text-gray-600">
+             <button type="submit" name = "export" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-sm"> Export Transactions </button>
+            </div>
+            
+        </form>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+

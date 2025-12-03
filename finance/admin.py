@@ -6,7 +6,7 @@ from import_export.admin import ExportMixin
 class TransResource(resources.ModelResource):
     class Meta:
         model = Trans
-        fields = ('id', 'user__username', 'title', 'amount', 'transaction_type', 'date', 'category')
+        fields = ('user__username', 'title', 'amount', 'transaction_type', 'date', 'category')
 
 class TransAdmin(ExportMixin, admin.ModelAdmin):
     resource_class = TransResource
