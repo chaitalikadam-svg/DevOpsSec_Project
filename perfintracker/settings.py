@@ -128,8 +128,12 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = 'login'
+#LOGIN_REDIRECT_URL = '/'
+#LOGOUT_REDIRECT_URL = 'login'
+
+
+LOGIN_REDIRECT_URL = '/finance/dashboard/'
+LOGOUT_REDIRECT_URL = '/'
 
 CSRF_TRUSTED_ORIGINS = [
     'https://f641523309dc4a2d8bd8792f2046a759.vfs.cloud9.us-east-1.amazonaws.com'

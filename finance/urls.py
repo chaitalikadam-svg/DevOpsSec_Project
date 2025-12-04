@@ -3,7 +3,7 @@ from finance.views import RegisterView, DashboardView, TransCreateView, Transact
 
 urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),
-    path('', DashboardView.as_view(), name='dashboard'),
+    path('dashboard/', DashboardView.as_view(), name='dashboard'),
     path('transaction/add/', TransCreateView.as_view(), name='add_transaction'),
     path('transactions/', TransactionListView.as_view(), name='transaction_list'),  
     path('goal/add/', GoalCreateView.as_view(), name='goal_add'),  

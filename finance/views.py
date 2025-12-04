@@ -13,10 +13,15 @@ from django.urls import reverse_lazy
 from django.utils.dateparse import parse_date # to filter out the date for export
 from datetime import date, timedelta
 from decimal import Decimal
+from django.http import HttpResponse
 
 # Create your views here.
 #We will be using Class based view for Register
+class WelcomeView(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'finance/welcome.html')
 
+        
 class RegisterView(View):
     def get(self, request, *args, **kwargs):
         form = RegisterForm()
