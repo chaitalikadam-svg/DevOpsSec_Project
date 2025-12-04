@@ -1,6 +1,5 @@
 asgiref==3.10.0
 attrs==20.3.0
-awscli==2.30.4
 Django==4.2.25
 django-import-export==4.3.12
 gunicorn==23.0.0
