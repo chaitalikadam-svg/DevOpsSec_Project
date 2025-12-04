@@ -38,8 +38,26 @@
     <form action = "" class = "" method="post">
         {% csrf_token %}
         <div>
+            
+            <label class="block text-black font-bold mb-2" for = "id_transaction_type">Transaction Type:</label>
+            <select id="id_transaction_type" name="transaction_type" class="w-full px-3 py-2 border border-gray-300 rounded-md" focus:outline-none focus:ring-2 focus:ring-blue-500 required>
+                <option value="" disabled selected>Select transaction type</option>
+                <option value="income">Income</option>
+                <option value="expense">Expense</option>    
+            </select>
+            {% if form.transaction_type.errors %}
+                <p class="text-red-500 text-sm mt-1">{{ form.transaction_type.errors.0 }}</p>
+            {% endif %} 
+            
+            <label class="block text-black font-bold mb-2" for = "id_category">Category:</label>
+            <select id="id_category" name="category" class="w-full px-3 py-2 border border-gray-300 rounded-md" 
+            focus:outline-none focus:ring-2 focus:ring-blue-500 required>
+             <option value="" disabled selected>Select category</option>
+            </select>
+            
             <label class="block text-black font-bold mb-2" for = "id_title">Title:</label>
-            <input type="text" id="id_title" name="title" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder = "Enter transaction title"
+            <input type="text" id="id_title" name="title" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder = "Enter transaction title" pattern="^(?=.*[A-Za-z])[A-Za-z0-9 ]+$"
+            title="Title must be alphanumeric and contain at least one letter"
             focus:outline-none focus:ring-2 focus:ring-blue-500 required>
             {% if form.title.errors %}
                 <p class="text-red-500 text-sm mt-1">{{ form.title.errors.0 }}</p>
@@ -52,28 +70,14 @@
                 <p class="text-red-500 text-sm mt-1">{{ form.amount.errors.0 }}</p>
             {% endif %}    
 
-            <label class="block text-black font-bold mb-2" for = "id_transaction_type">Transaction Type:</label>
-            <select id="id_transaction_type" name="transaction_type" class="w-full px-3 py-2 border border-gray-300 rounded-md" focus:outline-none focus:ring-2 focus:ring-blue-500 required>
-                <option value="" disabled selected>Select transaction type</option>
-                <option value="income">Income</option>
-                <option value="expense">Expense</option>    
-            </select>
-            {% if form.transaction_type.errors %}
-                <p class="text-red-500 text-sm mt-1">{{ form.transaction_type.errors.0 }}</p>
-            {% endif %} 
-
             <label class="block text-black font-bold mb-2" for = "id_date">Date:</label>
-            <input type="date" id="id_date" name="date" class="w-full px-3 py-2 border border-gray-300 rounded-md"
+            <input type="date" id="id_date" name="date" class="w-full px-3 py-2 border border-gray-300 rounded-md" max="{{ today }}"
             focus:outline-none focus:ring-2 focus:ring-blue-500 required>
             {% if form.date.errors %}
                 <p class="text-red-500 text-sm mt-1">{{ form.date.errors.0 }}</p>
             {% endif %} 
 
-            <label class="block text-black font-bold mb-2" for = "id_category">Category:</label>
-            <select id="id_category" name="category" class="w-full px-3 py-2 border border-gray-300 rounded-md" 
-            focus:outline-none focus:ring-2 focus:ring-blue-500 required>
-             <option value="" disabled selected>Select category</option>
-            </select>
+
             <!--{% if form.category.errors %}
                 <p class="text-red-500 text-sm mt-1">{{ form.category.errors.0 }}</p>
             {% endif %} -->

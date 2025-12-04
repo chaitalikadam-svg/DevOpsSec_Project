@@ -14,8 +14,6 @@ from django.utils.dateparse import parse_date # to filter out the date for expor
 from datetime import date, timedelta
 from decimal import Decimal
 
-
-
 # Create your views here.
 #We will be using Class based view for Register
 
@@ -34,6 +32,7 @@ class RegisterView(View):
     
 class DashboardView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
+            
         transactions = Trans.objects.filter(user = request.user)
         goals = Goal.objects.filter(user = request.user)
 
@@ -125,6 +124,11 @@ class ExportTransactionsView(LoginRequiredMixin, View):
             user_transactions = user_transactions.filter(date__gte=start_date)
         if end_date:
             user_transactions = user_transactions.filter(date__lte=end_date)
+            
+        income_total = user_transactions.filter(transaction_type='income').aggregate(Sum('amount'))['amount__sum'] or 0
+        expense_total = user_transactions.filter(transaction_type='expense').aggregate(Sum('amount'))['amount__sum'] or 0
+
+
 
         if 'export' in request.GET:
             transactions_resource = TransResource()
@@ -146,7 +150,11 @@ class ExportTransactionsView(LoginRequiredMixin, View):
                 'category': category,
                 'start_date': start_date_str,
                 'end_date': end_date_str
-            }
+            },
+            
+            'income_total': income_total, #display total income
+            'expense_total': expense_total, #display total expense
+            'net_saving': income_total - expense_total,  # Display net saving
         }
         return render(request, 'finance/export.html', context)
 
