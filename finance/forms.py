@@ -1,5 +1,8 @@
 """Forms configuration for the finance app."""
 
+# Pylint disables for Django-specific patterns
+# pylint: disable=too-many-ancestors, too-few-public-methods
+
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
@@ -56,4 +59,3 @@ class GoalForm(forms.ModelForm):
     class Meta:
         model = Goal
         fields = ["name", "target_amount", "deadline"]
-        

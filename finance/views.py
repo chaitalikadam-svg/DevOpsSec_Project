@@ -19,11 +19,13 @@ from django.http import HttpResponse
 #We will be using Class based view for Register
 class WelcomeView(View):
     """ Class to welcome user."""
+    
     def get(self, request, *args, **kwargs):
         return render(request, 'finance/welcome.html')
 
 class RegisterView(View):
     """ Class to register user."""
+    
     def get(self, request, *args, **kwargs):
         form = RegisterForm()
         return render(request, 'finance/register.html', {'form': form})
@@ -38,19 +40,15 @@ class RegisterView(View):
     
 class DashboardView(LoginRequiredMixin, View):
     """ Class to show dashboard user."""
+    
     def get(self, request, *args, **kwargs):
         transactions = Trans.objects.filter(user = request.user)
         goals = Goal.objects.filter(user = request.user)
-
         income_data = Trans.objects.filter(user=request.user, transaction_type='income').aggregate(Sum('amount'))
         expense_data = Trans.objects.filter(user=request.user, transaction_type='expense').aggregate(Sum('amount'))
-
         total_income = income_data.get('amount__sum') or 0
         total_expense = expense_data.get('amount__sum') or 0
-
-
         net_saving = total_income - total_expense
-
         remaining_savings = net_saving
         goal_progress = []
         for goal in goals:
@@ -76,6 +74,7 @@ class DashboardView(LoginRequiredMixin, View):
 
 class TransCreateView(LoginRequiredMixin, View):
     """ Class to add transactions of user."""
+    
     def get(self, request, *args, **kwargs):
         form = TransactionForm()
         return render(request, 'finance/transactions_form.html',{'form': form})
@@ -91,6 +90,7 @@ class TransCreateView(LoginRequiredMixin, View):
     
 class TransactionListView(LoginRequiredMixin, View):
     """ Class to show user's transaction."""
+    
     def get(self, request, *args, **kwargs):
         transactions = Trans.objects.filter(user=request.user).order_by('-date')
         return render(request, 'finance/transaction_lists.html', {
@@ -99,6 +99,7 @@ class TransactionListView(LoginRequiredMixin, View):
     
 class GoalCreateView(LoginRequiredMixin, View):
     """ Class to create user's goal."""
+    
     def get(self, request, *args, **kwargs):
         form = GoalForm()
         return render(request, 'finance/goal_form.html',{'form': form})
@@ -114,6 +115,7 @@ class GoalCreateView(LoginRequiredMixin, View):
     
 class ExportTransactionsView(LoginRequiredMixin, View):
     """ Class to export user's past transactions"""
+    
     def get(self, request, *args, **kwargs):
         user_transactions = Trans.objects.filter(user=request.user)
 
@@ -121,10 +123,8 @@ class ExportTransactionsView(LoginRequiredMixin, View):
         category = request.GET.getlist('category')
         start_date_str = request.GET.get('start_date')
         end_date_str = request.GET.get('end_date')
-
         start_date = parse_date(start_date_str) if start_date_str else None
         end_date = parse_date(end_date_str) if end_date_str else None
-
         if tx_type in ['income', 'expense']:
             user_transactions = user_transactions.filter(transaction_type__in = tx_type)
         if category:
@@ -133,11 +133,8 @@ class ExportTransactionsView(LoginRequiredMixin, View):
             user_transactions = user_transactions.filter(date__gte=start_date)
         if end_date:
             user_transactions = user_transactions.filter(date__lte=end_date)
-            
         income_total = user_transactions.filter(transaction_type='income').aggregate(Sum('amount'))['amount__sum'] or 0
         expense_total = user_transactions.filter(transaction_type='expense').aggregate(Sum('amount'))['amount__sum'] or 0
-
-
 
         if 'export' in request.GET:
             transactions_resource = TransResource()
@@ -169,6 +166,7 @@ class ExportTransactionsView(LoginRequiredMixin, View):
 
 class TransactionUpdateView(LoginRequiredMixin, UpdateView):
     """ Class to update user's transaction."""
+    
     model = Trans
     fields = ['title', 'amount', 'transaction_type', 'category', 'date']  # adjust as needed
     template_name = 'finance/edit_transaction.html'
@@ -179,6 +177,7 @@ class TransactionUpdateView(LoginRequiredMixin, UpdateView):
 
 class TransactionDeleteView(LoginRequiredMixin, DeleteView):
     """ Class to delete user's transaction."""
+    
     model = Trans
     template_name = 'finance/delete_transaction.html'
     success_url = reverse_lazy('transaction_list')
@@ -188,6 +187,7 @@ class TransactionDeleteView(LoginRequiredMixin, DeleteView):
     
 class AnalysisView(View):
     """ Class to analyse user's transaction."""
+    
     def get(self, request, *args, **kwargs):
         expense_labels = []
         expense_data = []
@@ -203,7 +203,6 @@ class AnalysisView(View):
         start_date = parse_date(str(start_date_str)) if start_date_str else None
         end_date = parse_date(str(end_date_str)) if end_date_str else None
         show_charts = bool(start_date and end_date)
-        
         expenses = Trans.objects.filter(user=request.user, transaction_type='expense')
         income = Trans.objects.filter(user=request.user, transaction_type='income')
 
@@ -211,17 +210,13 @@ class AnalysisView(View):
             expenses = expenses.filter(date__gte=start_date)
         if end_date:
             expenses = expenses.filter(date__lte=end_date)
-        
-        # Aggregate by category
+        # Aggegate by category
         category_expenses = expenses.values('category').annotate(total=Sum('amount'))
         category_income = income.values('category').annotate(total=Sum('amount'))
-
         expense_labels = [entry['category'].capitalize() for entry in category_expenses]
         expense_data = [float(entry['total']) for entry in category_expenses]
-
         income_labels = [entry['category'].capitalize() for entry in category_income]
         income_data = [float(entry['total']) for entry in category_income]
-        
         total_expense = sum(Decimal(entry['total']) for entry in category_expenses)
 
         if total_expense > 0:
