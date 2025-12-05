@@ -9,7 +9,7 @@ from .models import Trans, Goal
 from django.db.models import Sum
 from .admin import TransResource
 from django.views.generic.edit import UpdateView, DeleteView
-from django.urls import reverse_lazy 
+from django.urls import reverse_lazy
 from django.utils.dateparse import parse_date # to filter out the date for export
 from datetime import date, timedelta
 from decimal import Decimal
@@ -18,11 +18,12 @@ from django.http import HttpResponse
 # Create your views here.
 #We will be using Class based view for Register
 class WelcomeView(View):
+    """ Class to welcome user."""
     def get(self, request, *args, **kwargs):
         return render(request, 'finance/welcome.html')
 
-        
 class RegisterView(View):
+    """ Class to register user."""
     def get(self, request, *args, **kwargs):
         form = RegisterForm()
         return render(request, 'finance/register.html', {'form': form})
@@ -36,8 +37,8 @@ class RegisterView(View):
         return render(request, 'finance/register.html', {'form': form})
     
 class DashboardView(LoginRequiredMixin, View):
+    """ Class to show dashboard user."""
     def get(self, request, *args, **kwargs):
-            
         transactions = Trans.objects.filter(user = request.user)
         goals = Goal.objects.filter(user = request.user)
 
@@ -73,8 +74,8 @@ class DashboardView(LoginRequiredMixin, View):
         }
         return render(request, 'finance/dashboard.html', context)
 
-
 class TransCreateView(LoginRequiredMixin, View):
+    """ Class to add transactions of user."""
     def get(self, request, *args, **kwargs):
         form = TransactionForm()
         return render(request, 'finance/transactions_form.html',{'form': form})
@@ -89,6 +90,7 @@ class TransCreateView(LoginRequiredMixin, View):
         return render(request, 'finance/transactions_form.html', {'form': form})
     
 class TransactionListView(LoginRequiredMixin, View):
+    """ Class to show user's transaction."""
     def get(self, request, *args, **kwargs):
         transactions = Trans.objects.filter(user=request.user).order_by('-date')
         return render(request, 'finance/transaction_lists.html', {
@@ -96,6 +98,7 @@ class TransactionListView(LoginRequiredMixin, View):
         })
     
 class GoalCreateView(LoginRequiredMixin, View):
+    """ Class to create user's goal."""
     def get(self, request, *args, **kwargs):
         form = GoalForm()
         return render(request, 'finance/goal_form.html',{'form': form})
@@ -110,6 +113,7 @@ class GoalCreateView(LoginRequiredMixin, View):
         return render(request, 'finance/goal_form.html', {'form': form})
     
 class ExportTransactionsView(LoginRequiredMixin, View):
+    """ Class to export user's past transactions"""
     def get(self, request, *args, **kwargs):
         user_transactions = Trans.objects.filter(user=request.user)
 
@@ -163,9 +167,8 @@ class ExportTransactionsView(LoginRequiredMixin, View):
         }
         return render(request, 'finance/export.html', context)
 
-
-
 class TransactionUpdateView(LoginRequiredMixin, UpdateView):
+    """ Class to update user's transaction."""
     model = Trans
     fields = ['title', 'amount', 'transaction_type', 'category', 'date']  # adjust as needed
     template_name = 'finance/edit_transaction.html'
@@ -175,6 +178,7 @@ class TransactionUpdateView(LoginRequiredMixin, UpdateView):
         return Trans.objects.filter(user=self.request.user)
 
 class TransactionDeleteView(LoginRequiredMixin, DeleteView):
+    """ Class to delete user's transaction."""
     model = Trans
     template_name = 'finance/delete_transaction.html'
     success_url = reverse_lazy('transaction_list')
@@ -183,6 +187,7 @@ class TransactionDeleteView(LoginRequiredMixin, DeleteView):
         return Trans.objects.filter(user=self.request.user)
     
 class AnalysisView(View):
+    """ Class to analyse user's transaction."""
     def get(self, request, *args, **kwargs):
         expense_labels = []
         expense_data = []
@@ -197,19 +202,16 @@ class AnalysisView(View):
         # Ensure values are strings before parsing
         start_date = parse_date(str(start_date_str)) if start_date_str else None
         end_date = parse_date(str(end_date_str)) if end_date_str else None
-        
         show_charts = bool(start_date and end_date)
         
         expenses = Trans.objects.filter(user=request.user, transaction_type='expense')
         income = Trans.objects.filter(user=request.user, transaction_type='income')
-
 
         if start_date:
             expenses = expenses.filter(date__gte=start_date)
         if end_date:
             expenses = expenses.filter(date__lte=end_date)
         
-
         # Aggregate by category
         category_expenses = expenses.values('category').annotate(total=Sum('amount'))
         category_income = income.values('category').annotate(total=Sum('amount'))
@@ -240,5 +242,3 @@ class AnalysisView(View):
             'show_charts': show_charts
         }
         return render(request, 'finance/analysis.html', context)
-
-
