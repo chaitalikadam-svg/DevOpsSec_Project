@@ -59,3 +59,4 @@ class GoalForm(forms.ModelForm):
     class Meta:
         model = Goal
         fields = ["name", "target_amount", "deadline"]
+        
