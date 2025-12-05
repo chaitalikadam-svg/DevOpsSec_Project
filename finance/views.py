@@ -21,13 +21,11 @@ class WelcomeView(View):
     """ Class to welcome user."""
     def get(self, request, *args, **kwargs):
         return render(request, 'finance/welcome.html')
-
 class RegisterView(View):
     """ Class to register user."""
     def get(self, request, *args, **kwargs):
         form = RegisterForm()
         return render(request, 'finance/register.html', {'form': form})
-    
     def post(self, request, *args, **kwargs):
         form = RegisterForm(request.POST)
         if form.is_valid():
@@ -35,7 +33,6 @@ class RegisterView(View):
             login(request, user)
             return redirect('dashboard')
         return render(request, 'finance/register.html', {'form': form})
-    
 class DashboardView(LoginRequiredMixin, View):
     """ Class to show dashboard user."""
     def get(self, request, *args, **kwargs):
@@ -68,13 +65,11 @@ class DashboardView(LoginRequiredMixin, View):
             'goal_progress': goal_progress,
         }
         return render(request, 'finance/dashboard.html', context)
-
 class TransCreateView(LoginRequiredMixin, View):
     """ Class to add transactions of user."""
     def get(self, request, *args, **kwargs):
         form = TransactionForm()
         return render(request, 'finance/transactions_form.html',{'form': form})
-    
     def post(self, request, *args, **kwargs):
         form = TransactionForm(request.POST)
         if form.is_valid():
@@ -83,7 +78,6 @@ class TransCreateView(LoginRequiredMixin, View):
             transaction.save()
             return redirect('dashboard')
         return render(request, 'finance/transactions_form.html', {'form': form})
-    
 class TransactionListView(LoginRequiredMixin, View):
     """ Class to show user's transaction."""
     def get(self, request, *args, **kwargs):
@@ -91,13 +85,11 @@ class TransactionListView(LoginRequiredMixin, View):
         return render(request, 'finance/transaction_lists.html', {
             'transactions': transactions
         })
-    
 class GoalCreateView(LoginRequiredMixin, View):
     """ Class to create user's goal."""
     def get(self, request, *args, **kwargs):
         form = GoalForm()
         return render(request, 'finance/goal_form.html',{'form': form})
-    
     def post(self, request, *args, **kwargs):
         form = GoalForm(request.POST)
         if form.is_valid():
@@ -106,12 +98,10 @@ class GoalCreateView(LoginRequiredMixin, View):
             goal.save()
             return redirect('dashboard')
         return render(request, 'finance/goal_form.html', {'form': form})
-    
 class ExportTransactionsView(LoginRequiredMixin, View):
     """ Class to export user's past transactions"""
     def get(self, request, *args, **kwargs):
         user_transactions = Trans.objects.filter(user=request.user)
-
         tx_type = request.GET.getlist('type')
         category = request.GET.getlist('category')
         start_date_str = request.GET.get('start_date')
@@ -156,26 +146,21 @@ class ExportTransactionsView(LoginRequiredMixin, View):
             'net_saving': income_total - expense_total,  # Display net saving
         }
         return render(request, 'finance/export.html', context)
-
 class TransactionUpdateView(LoginRequiredMixin, UpdateView):
     """ Class to update user's transaction."""
     model = Trans
     fields = ['title', 'amount', 'transaction_type', 'category', 'date']  # adjust as needed
     template_name = 'finance/edit_transaction.html'
     success_url = reverse_lazy('transaction_list')
-
     def get_queryset(self):
         return Trans.objects.filter(user=self.request.user)
-
 class TransactionDeleteView(LoginRequiredMixin, DeleteView):
     """ Class to delete user's transaction."""
     model = Trans
     template_name = 'finance/delete_transaction.html'
     success_url = reverse_lazy('transaction_list')
-
     def get_queryset(self):
         return Trans.objects.filter(user=self.request.user)
-    
 class AnalysisView(View):
     """ Class to analyse user's transaction."""
     def get(self, request, *args, **kwargs):
