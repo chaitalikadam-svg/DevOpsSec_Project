@@ -1,19 +1,23 @@
-from django.shortcuts import render, redirect, HttpResponse
-from django.views import View
-from finance.forms import RegisterForm
-from finance.forms import TransactionForm
-from finance.forms import GoalForm
-from django.contrib.auth import login
-from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import Trans, Goal
-from django.db.models import Sum
-from .admin import TransResource
-from django.views.generic.edit import UpdateView, DeleteView
-from django.urls import reverse_lazy
-from django.utils.dateparse import parse_date # to filter out the date for export
+"""Views for the finance app."""
+
+# 1. Standard library imports
 from datetime import date, timedelta
 from decimal import Decimal
-from django.http import HttpResponse
+
+# 2. Third-party imports (Django)
+from django.shortcuts import render, redirect, HttpResponse
+from django.views import View
+from django.contrib.auth import login
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Sum
+from django.views.generic.edit import UpdateView, DeleteView
+from django.urls import reverse_lazy
+from django.utils.dateparse import parse_date
+
+# 3. First-party imports (your app)
+from finance.forms import RegisterForm, TransactionForm, GoalForm
+from .models import Trans, Goal
+from .admin import TransResource
 
 # Create your views here.
 #We will be using Class based view for Register
@@ -209,9 +213,9 @@ class AnalysisView(View):
             ]
             summarise = "\n".join(summary_parts)
         else:
-            summarise = "No expenses found from {0} to {1}.".format(
-                start_date.strftime("%d %B %Y"),
-                end_date.strftime("%d %B %Y"),
+            summarise = (
+                f"No expenses found from {start_date.strftime('%d %B %Y')} "
+                f"to {end_date.strftime('%d %B %Y')}."
             )
             context = {
             'expense_labels': expense_labels,
