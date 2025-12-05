@@ -19,13 +19,11 @@ from django.http import HttpResponse
 #We will be using Class based view for Register
 class WelcomeView(View):
     """ Class to welcome user."""
-    
     def get(self, request, *args, **kwargs):
         return render(request, 'finance/welcome.html')
 
 class RegisterView(View):
     """ Class to register user."""
-    
     def get(self, request, *args, **kwargs):
         form = RegisterForm()
         return render(request, 'finance/register.html', {'form': form})
@@ -40,7 +38,6 @@ class RegisterView(View):
     
 class DashboardView(LoginRequiredMixin, View):
     """ Class to show dashboard user."""
-    
     def get(self, request, *args, **kwargs):
         transactions = Trans.objects.filter(user = request.user)
         goals = Goal.objects.filter(user = request.user)
@@ -74,7 +71,6 @@ class DashboardView(LoginRequiredMixin, View):
 
 class TransCreateView(LoginRequiredMixin, View):
     """ Class to add transactions of user."""
-    
     def get(self, request, *args, **kwargs):
         form = TransactionForm()
         return render(request, 'finance/transactions_form.html',{'form': form})
@@ -90,7 +86,6 @@ class TransCreateView(LoginRequiredMixin, View):
     
 class TransactionListView(LoginRequiredMixin, View):
     """ Class to show user's transaction."""
-    
     def get(self, request, *args, **kwargs):
         transactions = Trans.objects.filter(user=request.user).order_by('-date')
         return render(request, 'finance/transaction_lists.html', {
@@ -99,7 +94,6 @@ class TransactionListView(LoginRequiredMixin, View):
     
 class GoalCreateView(LoginRequiredMixin, View):
     """ Class to create user's goal."""
-    
     def get(self, request, *args, **kwargs):
         form = GoalForm()
         return render(request, 'finance/goal_form.html',{'form': form})
@@ -115,7 +109,6 @@ class GoalCreateView(LoginRequiredMixin, View):
     
 class ExportTransactionsView(LoginRequiredMixin, View):
     """ Class to export user's past transactions"""
-    
     def get(self, request, *args, **kwargs):
         user_transactions = Trans.objects.filter(user=request.user)
 
@@ -166,7 +159,6 @@ class ExportTransactionsView(LoginRequiredMixin, View):
 
 class TransactionUpdateView(LoginRequiredMixin, UpdateView):
     """ Class to update user's transaction."""
-    
     model = Trans
     fields = ['title', 'amount', 'transaction_type', 'category', 'date']  # adjust as needed
     template_name = 'finance/edit_transaction.html'
@@ -177,7 +169,6 @@ class TransactionUpdateView(LoginRequiredMixin, UpdateView):
 
 class TransactionDeleteView(LoginRequiredMixin, DeleteView):
     """ Class to delete user's transaction."""
-    
     model = Trans
     template_name = 'finance/delete_transaction.html'
     success_url = reverse_lazy('transaction_list')
@@ -187,7 +178,6 @@ class TransactionDeleteView(LoginRequiredMixin, DeleteView):
     
 class AnalysisView(View):
     """ Class to analyse user's transaction."""
-    
     def get(self, request, *args, **kwargs):
         expense_labels = []
         expense_data = []
@@ -237,3 +227,4 @@ class AnalysisView(View):
             'show_charts': show_charts
         }
         return render(request, 'finance/analysis.html', context)
+
