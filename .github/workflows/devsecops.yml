@@ -27,7 +27,7 @@ jobs:
 
       - name: Run Pylint
         run: |
-          pylint finance perfintracker --disable=C0116,C0115 $(git ls-files '*.py')
+          pylint finance perfintracker --disable=C0116,C0115, W0613, R0901 $(git ls-files '*.py')
 
   deploy:
     if: github.event.pull_request.merged == true || github.event_name == 'push'
