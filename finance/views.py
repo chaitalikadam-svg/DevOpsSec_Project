@@ -55,7 +55,6 @@ class DashboardView(LoginRequiredMixin, View):
                 remaining_savings = 0
             else:
                 goal_progress.append({'goal': goal, 'progress': 0})
-
         context = {
             'transactions': transactions,
             'goals': goals,
@@ -118,19 +117,16 @@ class ExportTransactionsView(LoginRequiredMixin, View):
             user_transactions = user_transactions.filter(date__lte=end_date)
         income_total = user_transactions.filter(transaction_type='income').aggregate(Sum('amount'))['amount__sum'] or 0
         expense_total = user_transactions.filter(transaction_type='expense').aggregate(Sum('amount'))['amount__sum'] or 0
-
         if 'export' in request.GET:
             transactions_resource = TransResource()
             dataset = transactions_resource.export(queryset=user_transactions)
             excel_data = dataset.export('xlsx')
-
             response = HttpResponse(
                 excel_data,
                 content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
             )
             response['Content-Disposition'] = 'attachment; filename="transactions.xlsx"'
             return response
-
         # If not exporting, render the form
         context = {
             'transactions': user_transactions,
@@ -140,7 +136,6 @@ class ExportTransactionsView(LoginRequiredMixin, View):
                 'start_date': start_date_str,
                 'end_date': end_date_str
             },
-            
             'income_total': income_total, #display total income
             'expense_total': expense_total, #display total expense
             'net_saving': income_total - expense_total,  # Display net saving
@@ -169,18 +164,14 @@ class AnalysisView(View):
         income_labels = []
         income_data = []
         summarise = ""
-        
         start_date_str = request.GET.get('start_date')
         end_date_str = request.GET.get('end_date')
-        
-        
         # Ensure values are strings before parsing
         start_date = parse_date(str(start_date_str)) if start_date_str else None
         end_date = parse_date(str(end_date_str)) if end_date_str else None
         show_charts = bool(start_date and end_date)
         expenses = Trans.objects.filter(user=request.user, transaction_type='expense')
         income = Trans.objects.filter(user=request.user, transaction_type='income')
-
         if start_date:
             expenses = expenses.filter(date__gte=start_date)
         if end_date:
@@ -193,7 +184,6 @@ class AnalysisView(View):
         income_labels = [entry['category'].capitalize() for entry in category_income]
         income_data = [float(entry['total']) for entry in category_income]
         total_expense = sum(Decimal(entry['total']) for entry in category_expenses)
-
         if total_expense > 0:
             summary_parts = [
                 f"{(entry['total'] / total_expense * 100):.2f}% was spent on {entry['category']}"
@@ -202,7 +192,6 @@ class AnalysisView(View):
             summarise = "\n".join(summary_parts)
         else:
             summarise = f"No expenses found from {start_date.strftime('%d %B %Y')} to {end_date.strftime('%d %B %Y')}."
-
         context = {
             'expense_labels': expense_labels,
             'expense_data': expense_data,
