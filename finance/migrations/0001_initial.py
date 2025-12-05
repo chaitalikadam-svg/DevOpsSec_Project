@@ -1,3 +1,4 @@
+# pylint: disable=invalid-name
 """Initial migration for the finance app."""
 
 import django.db.models.deletion

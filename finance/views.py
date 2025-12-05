@@ -24,13 +24,16 @@ from .admin import TransResource
 class WelcomeView(View):
     """ Class to welcome user."""
     def get(self, request):
+        """Handle GET request and renders the user to welcome page."""
         return render(request, 'finance/welcome.html')
 class RegisterView(View):
     """ Class to register user."""
     def get(self, request):
+        """Handle GET request and renders the user to register page ."""
         form = RegisterForm()
         return render(request, 'finance/register.html', {'form': form})
     def post(self, request):
+        """Handle POST request and sends the data to form model register page ."""
         form = RegisterForm(request.POST)
         if form.is_valid():
             user  = form.save()
@@ -40,6 +43,7 @@ class RegisterView(View):
 class DashboardView(LoginRequiredMixin, View):
     """ Class to show dashboard user."""
     def get(self, request):
+        """Handle GET request and renders the user to dashbard page ."""
         transactions = Trans.objects.filter(user = request.user)
         goals = Goal.objects.filter(user = request.user)
         income_data = (
@@ -79,9 +83,11 @@ class DashboardView(LoginRequiredMixin, View):
 class TransCreateView(LoginRequiredMixin, View):
     """ Class to add transactions of user."""
     def get(self, request):
+        """Handle GET request and renders the user to transactions page ."""
         form = TransactionForm()
         return render(request, 'finance/transactions_form.html',{'form': form})
     def post(self, request):
+        """Handle POST request and posts the transaction data into model trans ."""
         form = TransactionForm(request.POST)
         if form.is_valid():
             transaction  = form.save(commit=False)
@@ -92,6 +98,7 @@ class TransCreateView(LoginRequiredMixin, View):
 class TransactionListView(LoginRequiredMixin, View):
     """ Class to show user's transaction."""
     def get(self, request):
+        """Handle GET request and renders the user to previous transactions page ."""
         transactions = Trans.objects.filter(user=request.user).order_by('-date')
         return render(request, 'finance/transaction_lists.html', {
             'transactions': transactions
@@ -99,9 +106,11 @@ class TransactionListView(LoginRequiredMixin, View):
 class GoalCreateView(LoginRequiredMixin, View):
     """ Class to create user's goal."""
     def get(self, request):
+        """Handle GET request and renders the user to goalform page ."""
         form = GoalForm()
         return render(request, 'finance/goal_form.html',{'form': form})
     def post(self, request):
+        """Handle POST request and post the data to goal model ."""
         form = GoalForm(request.POST)
         if form.is_valid():
             goal  = form.save(commit=False)
@@ -112,6 +121,7 @@ class GoalCreateView(LoginRequiredMixin, View):
 class ExportTransactionsView(LoginRequiredMixin, View):
     """ Class to export user's past transactions"""
     def get(self, request):
+        """Handle GET request and renders the user to export page ."""
         user_transactions = Trans.objects.filter(user=request.user)
         tx_type = request.GET.getlist('type')
         category = request.GET.getlist('category')
@@ -170,6 +180,7 @@ class TransactionUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'finance/edit_transaction.html'
     success_url = reverse_lazy('transaction_list')
     def get_queryset(self):
+        """Handle GET request ."""
         return Trans.objects.filter(user=self.request.user)
 class TransactionDeleteView(LoginRequiredMixin, DeleteView):
     """ Class to delete user's transaction."""
@@ -177,11 +188,12 @@ class TransactionDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'finance/delete_transaction.html'
     success_url = reverse_lazy('transaction_list')
     def get_queryset(self):
+        """Handle GET request ."""
         return Trans.objects.filter(user=self.request.user)
 class AnalysisView(View):
     """Class to analyse a user's transactions and show expense/income breakdown."""
     def get(self, request):
-        # Parse dates from query params
+        """Handle GET request and renders the user to analysis page ."""
         start_date_str = request.GET.get("start_date")
         end_date_str = request.GET.get("end_date")
         start_date = parse_date(str(start_date_str)) if start_date_str else None
@@ -215,7 +227,6 @@ class AnalysisView(View):
                 f"No expenses found from {start_date.strftime('%d %B %Y')} "
                 f"to {end_date.strftime('%d %B %Y')}."
             )
-        # ✅ context always defined
         context = {
             "expense_labels": expense_labels,
             "expense_data": expense_data,
