@@ -179,33 +179,31 @@ class TransactionDeleteView(LoginRequiredMixin, DeleteView):
     def get_queryset(self):
         return Trans.objects.filter(user=self.request.user)
 class AnalysisView(View):
-    """ Class to analyse user's transaction."""
+    """Class to analyse a user's transactions and show expense/income breakdown."""
     def get(self, request):
-        expense_labels = []
-        expense_data = []
-        income_labels = []
-        income_data = []
-        summarise = ""
-        start_date_str = request.GET.get('start_date')
-        end_date_str = request.GET.get('end_date')
-        # Ensure values are strings before parsing
+        # Parse dates from query params
+        start_date_str = request.GET.get("start_date")
+        end_date_str = request.GET.get("end_date")
         start_date = parse_date(str(start_date_str)) if start_date_str else None
         end_date = parse_date(str(end_date_str)) if end_date_str else None
         show_charts = bool(start_date and end_date)
-        expenses = Trans.objects.filter(user=request.user, transaction_type='expense')
-        income = Trans.objects.filter(user=request.user, transaction_type='income')
+        # Base querysets
+        expenses = Trans.objects.filter(user=request.user, transaction_type="expense")
+        income = Trans.objects.filter(user=request.user, transaction_type="income")
         if start_date:
             expenses = expenses.filter(date__gte=start_date)
         if end_date:
             expenses = expenses.filter(date__lte=end_date)
-        # Aggegate by category
-        category_expenses = expenses.values('category').annotate(total=Sum('amount'))
-        category_income = income.values('category').annotate(total=Sum('amount'))
-        expense_labels = [entry['category'].capitalize() for entry in category_expenses]
-        expense_data = [float(entry['total']) for entry in category_expenses]
-        income_labels = [entry['category'].capitalize() for entry in category_income]
-        income_data = [float(entry['total']) for entry in category_income]
-        total_expense = sum(Decimal(entry['total']) for entry in category_expenses)
+        # Aggregate by category
+        category_expenses = expenses.values("category").annotate(total=Sum("amount"))
+        category_income = income.values("category").annotate(total=Sum("amount"))
+
+        expense_labels = [entry["category"].capitalize() for entry in category_expenses]
+        expense_data = [float(entry["total"]) for entry in category_expenses]
+        income_labels = [entry["category"].capitalize() for entry in category_income]
+        income_data = [float(entry["total"]) for entry in category_income]
+        # Build summary
+        total_expense = sum(Decimal(entry["total"]) for entry in category_expenses)
         if total_expense > 0:
             summary_parts = [
                 f"{(entry['total'] / total_expense * 100):.2f}% was spent on {entry['category']}"
@@ -217,13 +215,14 @@ class AnalysisView(View):
                 f"No expenses found from {start_date.strftime('%d %B %Y')} "
                 f"to {end_date.strftime('%d %B %Y')}."
             )
-            context = {
-            'expense_labels': expense_labels,
-            'expense_data': expense_data,
-            'income_labels': income_labels,
-            'income_data': income_data,
-            'summarise': summarise,
-            'show_charts': show_charts
+        # ✅ context always defined
+        context = {
+            "expense_labels": expense_labels,
+            "expense_data": expense_data,
+            "income_labels": income_labels,
+            "income_data": income_data,
+            "summarise": summarise,
+            "show_charts": show_charts,
         }
-        return render(request, 'finance/analysis.html', context)
+        return render(request, "finance/analysis.html", context)
         
