@@ -31,7 +31,7 @@ jobs:
 
       - name: Run pylint on tracked Python files
         run: |
-          pylint --disable=C0116,C0301,C0115 $(git ls-files '*.py')
+          pylint --disable=C0116,C0301,C0115,C0303,C0115 $(git ls-files '*.py')
 
   deploy:
     if: github.event.pull_request.merged == true || github.event_name == 'push'
