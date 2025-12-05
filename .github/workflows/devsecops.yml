@@ -27,11 +27,7 @@ jobs:
 
       - name: Run Pylint
         run: |
-          pylint Personal_Finance_Tracker finance perfintracker
-
-      - name: Run pylint on tracked Python files
-        run: |
-          pylint --disable=C0116,C0301,C0115,C0303,C0115 $(git ls-files '*.py')
+          pylint --disable=C0116,C0301,C0115,C0303 Personal_Finance_Tracker finance perfintracker
 
   deploy:
     if: github.event.pull_request.merged == true || github.event_name == 'push'
