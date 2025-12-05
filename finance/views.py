@@ -38,8 +38,16 @@ class DashboardView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         transactions = Trans.objects.filter(user = request.user)
         goals = Goal.objects.filter(user = request.user)
-        income_data = Trans.objects.filter(user=request.user, transaction_type='income').aggregate(Sum('amount'))
-        expense_data = Trans.objects.filter(user=request.user, transaction_type='expense').aggregate(Sum('amount'))
+        income_data = (
+            Trans.objects
+            .filter(user=request.user, transaction_type="income")
+            .aggregate(Sum("amount"))
+        )
+        expense_data = (
+            Trans.objects
+            .filter(user=request.user, transaction_type="expense")
+            .aggregate(Sum("amount"))
+        )
         total_income = income_data.get('amount__sum') or 0
         total_expense = expense_data.get('amount__sum') or 0
         net_saving = total_income - total_expense
@@ -115,8 +123,18 @@ class ExportTransactionsView(LoginRequiredMixin, View):
             user_transactions = user_transactions.filter(date__gte=start_date)
         if end_date:
             user_transactions = user_transactions.filter(date__lte=end_date)
-        income_total = user_transactions.filter(transaction_type='income').aggregate(Sum('amount'))['amount__sum'] or 0
-        expense_total = user_transactions.filter(transaction_type='expense').aggregate(Sum('amount'))['amount__sum'] or 0
+        income_total = (
+            user_transactions
+            .filter(transaction_type="income")
+            .aggregate(Sum("amount"))["amount__sum"]
+            or 0
+        )
+        expense_total = (
+            user_transactions
+            .filter(transaction_type="expense")
+            .aggregate(Sum("amount"))["amount__sum"]
+            or 0
+        )
         if 'export' in request.GET:
             transactions_resource = TransResource()
             dataset = transactions_resource.export(queryset=user_transactions)
@@ -191,8 +209,11 @@ class AnalysisView(View):
             ]
             summarise = "\n".join(summary_parts)
         else:
-            summarise = f"No expenses found from {start_date.strftime('%d %B %Y')} to {end_date.strftime('%d %B %Y')}."
-        context = {
+            summarise = "No expenses found from {0} to {1}.".format(
+                start_date.strftime("%d %B %Y"),
+                end_date.strftime("%d %B %Y"),
+            )
+            context = {
             'expense_labels': expense_labels,
             'expense_data': expense_data,
             'income_labels': income_labels,
