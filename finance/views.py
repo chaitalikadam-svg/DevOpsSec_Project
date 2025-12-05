@@ -1,7 +1,7 @@
 """Views for the finance app."""
 
 # 1. Standard library imports
-from datetime import date, timedelta
+#from datetime import date, timedelta
 from decimal import Decimal
 
 # 2. Third-party imports (Django)
@@ -118,7 +118,25 @@ class GoalCreateView(LoginRequiredMixin, View):
             goal.save()
             return redirect('dashboard')
         return render(request, 'finance/goal_form.html', {'form': form})
+class TransactionUpdateView(LoginRequiredMixin, UpdateView):
+    """ Class to update user's transaction."""
+    model = Trans
+    fields = ['title', 'amount', 'transaction_type', 'category', 'date']  # adjust as needed
+    template_name = 'finance/edit_transaction.html'
+    success_url = reverse_lazy('transaction_list')
+    def get_queryset(self):
+        """Handle GET request ."""
+        return Trans.objects.filter(user=self.request.user)
+class TransactionDeleteView(LoginRequiredMixin, DeleteView):
+    """ Class to delete user's transaction."""
+    model = Trans
+    template_name = 'finance/delete_transaction.html'
+    success_url = reverse_lazy('transaction_list')
+    def get_queryset(self):
+        """Handle GET request ."""
+        return Trans.objects.filter(user=self.request.user)
 class ExportTransactionsView(LoginRequiredMixin, View):
+    # pylint: disable=too-many-locals
     """ Class to export user's past transactions"""
     def get(self, request):
         """Handle GET request and renders the user to export page ."""
@@ -173,24 +191,8 @@ class ExportTransactionsView(LoginRequiredMixin, View):
             'net_saving': income_total - expense_total,  # Display net saving
         }
         return render(request, 'finance/export.html', context)
-class TransactionUpdateView(LoginRequiredMixin, UpdateView):
-    """ Class to update user's transaction."""
-    model = Trans
-    fields = ['title', 'amount', 'transaction_type', 'category', 'date']  # adjust as needed
-    template_name = 'finance/edit_transaction.html'
-    success_url = reverse_lazy('transaction_list')
-    def get_queryset(self):
-        """Handle GET request ."""
-        return Trans.objects.filter(user=self.request.user)
-class TransactionDeleteView(LoginRequiredMixin, DeleteView):
-    """ Class to delete user's transaction."""
-    model = Trans
-    template_name = 'finance/delete_transaction.html'
-    success_url = reverse_lazy('transaction_list')
-    def get_queryset(self):
-        """Handle GET request ."""
-        return Trans.objects.filter(user=self.request.user)
 class AnalysisView(View):
+    # pylint: disable=too-many-locals
     """Class to analyse a user's transactions and show expense/income breakdown."""
     def get(self, request):
         """Handle GET request and renders the user to analysis page ."""

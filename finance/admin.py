@@ -1,3 +1,4 @@
+# pylint: disable=too-few-public-methods
 """Admin configuration for the finance app."""
 
 from django.contrib import admin
