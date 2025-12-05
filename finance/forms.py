@@ -14,6 +14,7 @@ class RegisterForm(UserCreationForm):
     """Form for registering new users."""
 
     class Meta:
+        """Metadata for TransactionForm: defines model and fields."""
         model = User
         fields = ["username", "email", "password1", "password2"]
 
@@ -22,6 +23,7 @@ class TransactionForm(forms.ModelForm):
     """Form for creating and editing transactions."""
 
     class Meta:
+        """Metadata for TransactionForm: defines model and fields."""
         model = Trans
         fields = ["title", "amount", "transaction_type", "date", "category"]
 
@@ -57,6 +59,7 @@ class GoalForm(forms.ModelForm):
     """Form for creating and editing financial goals."""
 
     class Meta:
+        """Metadata for GoalForm: defines model and editable fields."""
         model = Goal
         fields = ["name", "target_amount", "deadline"]
         
