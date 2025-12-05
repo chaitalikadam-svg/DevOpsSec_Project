@@ -3,6 +3,7 @@ URL configuration for perfintracker project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.2/topics/http/urls/
+
 Examples:
 Function views
     1. Add an import:  from my_app import views
@@ -17,20 +18,15 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
-from django.http import HttpResponse
 from finance.views import WelcomeView
 
 
 urlpatterns = [
-    
-    path('admin/', admin.site.urls),
+    path("admin/", admin.site.urls),
 
     # Custom login/logout routes
-    path('login/', include('django.contrib.auth.urls')),  # login/logout
-    path('', WelcomeView.as_view(), name='welcome'),      # <-- root shows welcome.html
-    path('finance/', include('finance.urls')),     
-    #path('admin/', admin.site.urls),
-    #path('', include('finance.urls')),
-    
-    #path('accounts/', include('django.contrib.auth.urls')),
+    path("login/", include("django.contrib.auth.urls")),  # login/logout
+    path("", WelcomeView.as_view(), name="welcome"),      # <-- root shows welcome.html
+    path("finance/", include("finance.urls")),
+    # path("accounts/", include("django.contrib.auth.urls")),
 ]
