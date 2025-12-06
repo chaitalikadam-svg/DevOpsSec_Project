@@ -11,38 +11,70 @@
 
     <form action="{% url 'export_transactions' %}" method="get">
       {% csrf_token %}
-      <div>
-        <!-- Transaction type -->
-        <label class="block text-black font-bold mb-2">Type of Transaction</label>
-        <label><input type="checkbox" name="transaction_type" value="income" id="income"> Income</label><br>
-        <label><input type="checkbox" name="transaction_type" value="expense" id="expense"> Expense</label>
+    <div>
 
-        <!-- Categories -->
-        <label class="block text-black font-bold mb-2 mt-4">Select Category</label>
-        <label><input type="checkbox" name="category" value="salary" id="salary"> Salary</label><br>
-        <label><input type="checkbox" name="category" value="business" id="business"> Business</label><br>
-        <label><input type="checkbox" name="category" value="food" id="food"> Food</label><br>
-        <label><input type="checkbox" name="category" value="entertainment" id="entertainment"> Entertainment</label><br>
-        <label><input type="checkbox" name="category" value="utilities" id="utilities"> Utilities</label><br>
-        <label><input type="checkbox" name="category" value="transportation" id="transportation"> Transportation</label><br>
-        <label><input type="checkbox" name="category" value="health" id="health"> Health</label><br>
-        <label><input type="checkbox" name="category" value="others" id="others"> Others</label>
+    <!-- Transaction Type -->
+    <p class="block text-black font-bold mb-2">Type of Transaction</p>
 
-        <!-- Dates -->
-        <label class="block text-black font-bold mb-2 mt-4" for="start_date">Start Date:</label>
-        <input type="date" id="start_date" name="start_date" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+    <label for="income">
+      <input type="checkbox" name="transaction_type" value="income" id="income"> Income
+    </label><br>
 
-        <label class="block text-black font-bold mb-2 mt-4" for="end_date">End Date:</label>
-        <input type="date" id="end_date" name="end_date" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+    <label for="expense">
+      <input type="checkbox" name="transaction_type" value="expense" id="expense"> Expense
+    </label>
 
-        <!-- Submit -->
-        <div class="mt-4 text-center text-gray-600">
-          <button type="submit" name="export" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-sm">
-            Export Transactions
-          </button>
-        </div>
-      </div>
+    <!-- Categories -->
+    <p class="block text-black font-bold mb-2 mt-4">Select Category</p>
+
+    <label for="salary">
+      <input type="checkbox" name="category" value="salary" id="salary"> Salary
+    </label><br>
+
+    <label for="business">
+      <input type="checkbox" name="category" value="business" id="business"> Business
+    </label><br>
+
+    <label for="food">
+      <input type="checkbox" name="category" value="food" id="food"> Food
+    </label><br>
+
+    <label for="entertainment">
+      <input type="checkbox" name="category" value="entertainment" id="entertainment"> Entertainment
+    </label><br>
+
+    <label for="utilities">
+      <input type="checkbox" name="category" value="utilities" id="utilities"> Utilities
+    </label><br>
+
+    <label for="transportation">
+      <input type="checkbox" name="category" value="transportation" id="transportation"> Transportation
+    </label><br>
+
+    <label for="health">
+      <input type="checkbox" name="category" value="health" id="health"> Health
+    </label><br>
+
+    <label for="others">
+      <input type="checkbox" name="category" value="others" id="others"> Others
+    </label>
+
+    <!-- Dates -->
+    <label class="block text-black font-bold mb-2 mt-4" for="start_date">Start Date:</label>
+    <input type="date" id="start_date" name="start_date" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+
+    <label class="block text-black font-bold mb-2 mt-4" for="end_date">End Date:</label>
+    <input type="date" id="end_date" name="end_date" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+
+    <div class="mt-4 text-center text-gray-600">
+      <button type="submit" name="export" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-sm">
+        Export Transactions
+      </button>
+    </div>
+    
+     </div>
     </form>
+
   </div>
 </div>
 
