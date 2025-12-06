@@ -53,7 +53,8 @@ jobs:
             -Dsonar.projectKey=Chaitali-Kadam1008_DevOpsSec_Project
             -Dsonar.organization=chaitali-kadam1008
             -Dsonar.host.url=https://sonarcloud.io
-            -Dsonar.exclusions=staticfiles/admin/**
+            -Dsonar.exclusions=**/migrations/**,**/__pycache__/**,**/static/**
+ 
 
 
   deploy:
