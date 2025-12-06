@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <script src="https://cdn.tailwindcss.com"></script>
 <title>
@@ -16,9 +16,11 @@
     <a href="{% url 'analysis' %}" target="_blank" class="mr-5 text-white hover:font-bold hover:underline hover:text-blue-300">Analysis</a>
     <a href="{% url 'export_transactions' %}" target="_blank" class="mr-5 text-white hover:font-bold hover:underline hover:text-blue-300">Export Transactions</a>
 
-    <form id ="logout-form" action="{% url 'logout' %}" method="post" style="display: inline;">
+    <form id="logout-form" action="{% url 'logout' %}" method="post" style="display:inline;">
         {% csrf_token %}
-        <a href ="#" onclick = "document.getElementById('logout-form').submit();" class="mr-5 text-white hover:underline hover:text-blue-300">Logout</a>
+        <button type="submit" class="mr-5 text-white hover:underline hover:text-blue-300">
+            Logout
+        </button>
     </form>
 
     {%else%}
