@@ -29,7 +29,33 @@ jobs:
         run: |
           pylint finance perfintracker --disable=R0901,E1101,R0801 $(git ls-files '*.py')
 
+  sonarqube:
+    needs: pylint   # ensures Sonar runs only after pylint succeeds
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # required for full analysis
+
+      - name: Set up JDK 17 (Sonar requirement)
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v2
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
+            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
+            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
+
   deploy:
+    needs: sonarqube   # ensures deploy runs only after Sonar passes
     if: github.event.pull_request.merged == true || github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
