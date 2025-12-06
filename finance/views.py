@@ -119,13 +119,13 @@ class GoalCreateView(LoginRequiredMixin, View):
             return redirect('dashboard')
         return render(request, 'finance/goal_form.html', {'form': form})
 class TransactionUpdateView(LoginRequiredMixin, UpdateView):
-    """ Class to update user's transaction."""
+    """Class to update user's transaction."""
     model = Trans
-    fields = ['title', 'amount', 'transaction_type', 'category', 'date']  # adjust as needed
+    form_class = TransactionForm
     template_name = 'finance/edit_transaction.html'
     success_url = reverse_lazy('transaction_list')
+
     def get_queryset(self):
-        """Handle GET request ."""
         return Trans.objects.filter(user=self.request.user)
 class TransactionDeleteView(LoginRequiredMixin, DeleteView):
     """ Class to delete user's transaction."""
@@ -198,16 +198,23 @@ class AnalysisView(View):
         """Handle GET request and renders the user to analysis page ."""
         start_date_str = request.GET.get("start_date")
         end_date_str = request.GET.get("end_date")
+        today = now().date()
         start_date = parse_date(str(start_date_str)) if start_date_str else None
         end_date = parse_date(str(end_date_str)) if end_date_str else None
         show_charts = bool(start_date and end_date)
+        
         # Base querysets
+            
         expenses = Trans.objects.filter(user=request.user, transaction_type="expense")
         income = Trans.objects.filter(user=request.user, transaction_type="income")
+        
         if start_date:
             expenses = expenses.filter(date__gte=start_date)
+            income = income.filter(date__gte=start_date)
+        
         if end_date:
             expenses = expenses.filter(date__lte=end_date)
+            income = income.filter(date__lte=end_date)
         # Aggregate by category
         category_expenses = expenses.values("category").annotate(total=Sum("amount"))
         category_income = income.values("category").annotate(total=Sum("amount"))

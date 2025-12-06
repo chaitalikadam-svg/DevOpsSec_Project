@@ -1,6 +1,6 @@
 {%extends "finance/base.html" %}
 {% block content %}
-<div class="max-w-xl mx-auto mt-10 bg-violet-300 p-6 rounded shadow">
+<div class="max-w-xl mx-auto mt-10 bg-gradient-to-r from-[#ef32d9] to-[#89fffd]  p-6 rounded shadow">
   <h2 class="text-2xl font-bold mb-4 text-gray-800">Edit Transaction</h2>
   <form method="post">
     {% csrf_token %}
@@ -32,5 +32,55 @@
     border-radius: 0.375rem;
   }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const typeSelect = document.getElementById('id_transaction_type');
+    const categorySelect = document.getElementById('id_category');
+
+    const categories = {
+        income: [
+            {value: 'salary', text: 'Salary'},
+            {value: 'business', text: 'Business'}
+        ],
+        expense: [
+            {value: 'food', text: 'Food'},
+            {value: 'entertainment', text: 'Entertainment'},
+            {value: 'utilities', text: 'Utilities'},
+            {value: 'transportation', text: 'Transportation'},
+            {value: 'health', text: 'Health'},
+            {value: 'others', text: 'Others'}
+        ]
+    };
+
+    function updateCategories() {
+        const type = typeSelect.value;
+        const currentValue = categorySelect.value;
+
+        // Clear existing options
+        categorySelect.innerHTML = '';
+
+        // Add new options
+        categories[type].forEach(cat => {
+            const option = document.createElement('option');
+            option.value = cat.value;
+            option.text = cat.text;
+            categorySelect.add(option);
+        });
+
+        // Try to restore previous value if still valid
+        if (categories[type].some(cat => cat.value === currentValue)) {
+            categorySelect.value = currentValue;
+        }
+    }
+
+    // Initial update
+    updateCategories();
+
+    // Update on change
+    typeSelect.addEventListener('change', updateCategories);
+});
+</script>
+
 
 {% endblock %}
