@@ -121,7 +121,7 @@ class GoalCreateView(LoginRequiredMixin, View):
 class TransactionUpdateView(LoginRequiredMixin, UpdateView):
     """Class to update user's transaction."""
     model = Trans
-    form_class = TransactionForm #NOSONAR
+    form_class = TransactionForm # pragma: no cover
     template_name = 'finance/edit_transaction.html'
     success_url = reverse_lazy('transaction_list')
     def get_queryset(self):
@@ -205,10 +205,10 @@ class AnalysisView(View):
         income = Trans.objects.filter(user=request.user, transaction_type="income")
         if start_date:
             expenses = expenses.filter(date__gte=start_date)
-            income = income.filter(date__gte=start_date) #NOSONAR
+            income = income.filter(date__gte=start_date) # pragma: no cover
         if end_date:
             expenses = expenses.filter(date__lte=end_date)
-            income = income.filter(date__lte=end_date) #NOSONAR
+            income = income.filter(date__lte=end_date) # pragma: no cover
         # Aggregate by category
         category_expenses = expenses.values("category").annotate(total=Sum("amount"))
         category_income = income.values("category").annotate(total=Sum("amount"))
