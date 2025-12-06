@@ -202,7 +202,7 @@ class AnalysisView(View):
         show_charts = bool(start_date and end_date)
         # Base querysets
         expenses = Trans.objects.filter(user=request.user, transaction_type="expense")
-        income = Trans.objects.filter(user=request.user, transaction_type="income") 
+        income = Trans.objects.filter(user=request.user, transaction_type="income")
         if start_date:
             expenses = expenses.filter(date__gte=start_date)
             income = income.filter(date__gte=start_date) #NOSONAR
