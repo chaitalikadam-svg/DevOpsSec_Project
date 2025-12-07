@@ -70,6 +70,9 @@ jobs:
             -Dsonar.organization=chaitali-kadam1008
             -Dsonar.host.url=https://sonarcloud.io
             -Dsonar.exclusions=**/migrations/**,**/__pycache__/**,**/staticfiles/**
+            -Dsonar.python.coverage.reportPaths=coverage.xml
+
+
 
   deploy:
     needs: sonarqube
