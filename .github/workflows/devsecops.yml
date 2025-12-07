@@ -64,7 +64,7 @@ jobs:
           coverage run -m pytest
           coverage xml -o coverage.xml
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_TOKEN : "03892fd3a25f580ede95ad2d7c07f4268c4410a7"
 
   deploy:
     needs: sonarqube
