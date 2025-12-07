@@ -27,16 +27,16 @@ jobs:
 
       - name: Run Pylint
         run: |
-          pylint finance perfintracker --disable=R0901,E1101,R0801 $(git ls-files '*.py')
+          pylint --fail-under=9.0 finance perfintracker --disable=R0901,E1101,R0801 $(git ls-files '*.py')
 
   sonarqube:
-    needs: pylint   # ensures Sonar runs only after pylint succeeds
+    needs: pylint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # required for full analysis
+          fetch-depth: 0
 
       - name: Set up JDK 17 (Sonar requirement)
         uses: actions/setup-java@v3
@@ -46,19 +46,28 @@ jobs:
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
             -Dsonar.projectKey=Chaitali-Kadam1008_DevOpsSec_Project
             -Dsonar.organization=chaitali-kadam1008
             -Dsonar.host.url=https://sonarcloud.io
             -Dsonar.exclusions=**/migrations/**,**/__pycache__/**,**/staticfiles/**
- 
 
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-django coverage
+
+      - name: Run tests with coverage
+        run: |
+          coverage run -m pytest
+          coverage xml -o coverage.xml
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   deploy:
-    needs: sonarqube   # ensures deploy runs only after Sonar passes
+    needs: sonarqube
     if: github.event.pull_request.merged == true || github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
