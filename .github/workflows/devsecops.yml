@@ -27,7 +27,7 @@ jobs:
 
       - name: Run Pylint
         run: |
-          pylint --fail-under=9.0 finance perfintracker --disable=R0901,E1101,R0801 $(git ls-files '*.py')
+          pylint --fail-under=9.0 finance perfintracker $(git ls-files '*.py')
 
   sonarqube:
     needs: pylint
