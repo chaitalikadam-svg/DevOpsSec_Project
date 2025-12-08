@@ -12,7 +12,7 @@ from django.db.models import Sum
 from django.views.generic.edit import UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.utils.dateparse import parse_date
-# 3. First-party imports 
+# 3. First-party imports
 from finance.forms import RegisterForm, TransactionForm, GoalForm
 from .models import Trans, Goal
 from .admin import TransResource
