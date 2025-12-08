@@ -26,7 +26,7 @@ urlpatterns = [
 
     # Custom login/logout routes
     path("login/", include("django.contrib.auth.urls")),  # login/logout
-    path("", WelcomeView.as_view(), name="welcome"),      # <-- root shows welcome.html
+    path("", WelcomeView.as_view(), name="welcome"),      
     path("finance/", include("finance.urls")),
     # path("accounts/", include("django.contrib.auth.urls")),
 ]

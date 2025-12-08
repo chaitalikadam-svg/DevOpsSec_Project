@@ -115,7 +115,11 @@ class TestAnalysisView(TestCase):
             username="other", email="other@example.com", password="pass1234"
         )
         Trans.objects.create(
-        user=other_user, transaction_type="income", category="Salary", amount=999, date=date(2024, 1, 15)
+            user=other_user,
+            transaction_type="income",
+            category="Salary",
+            amount=999,
+            date=date(2024, 1, 15)
         )
         response = self.client.get(reverse("analysis"))
         ctx = response.context

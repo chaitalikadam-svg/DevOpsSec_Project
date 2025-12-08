@@ -11,12 +11,15 @@
     <form action = "" class = "" method="post">
         {% csrf_token %}
         <div>
+            <!--Goal Name-->
             <label class="block text-black font-bold mb-2" for = "id_name">Goal Name:</label>
             <input type="text" id="id_name" name="name" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder = "Enter goal name"
             focus:outline-none focus:ring-2 focus:ring-blue-500 required>
             {% if form.name.errors %}
                 <p class="text-red-500 text-sm mt-1">{{ form.name.errors.0 }}</p>
             {% endif %}     
+            
+            <!--Target Amount-->
             <label class="block text-black font-bold mb-2" for = "id_target_amount">Target Amount:</label>
             <input type="number" step="0.01" id="id_target_amount" name="target_amount" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder = "Enter target amount"
             focus:outline-none focus:ring-2 focus:ring-blue-500 required>
@@ -24,7 +27,7 @@
                 <p class="text-red-500 text-sm mt-1">{{ form.target_amount.errors.0 }}</p>
             {% endif %} 
 
-
+            <!--Deadline-->
             <label class="block text-black font-bold mb-2" for = "id_deadline">Deadline:</label>    
             <input type="date" id="id_deadline" name="deadline" class="w-full px-3 py-2 border border-gray-300 rounded-md"
             focus:outline-none focus:ring-2 focus:ring-blue-500 required>

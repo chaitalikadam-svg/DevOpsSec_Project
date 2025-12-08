@@ -1,9 +1,8 @@
 """Views for the finance app."""
 
-# 1. Standard library imports
-#from datetime import date, timedelta
+# Standard library imports
 from decimal import Decimal
-# 2. Third-party imports (Django)
+# Third-party imports (Django)
 from django.shortcuts import render, redirect, HttpResponse
 from django.views import View
 from django.contrib.auth import login
@@ -12,7 +11,7 @@ from django.db.models import Sum
 from django.views.generic.edit import UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.utils.dateparse import parse_date
-# 3. First-party imports
+# First-party imports
 from finance.forms import RegisterForm, TransactionForm, GoalForm
 from .models import Trans, Goal
 from .admin import TransResource

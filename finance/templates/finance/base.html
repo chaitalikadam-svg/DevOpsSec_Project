@@ -8,6 +8,7 @@
 </head>
 <body class="min-h-screen bg-gradient-to-r from-[#fcb045] via-[#fd1d1d] to-[#833ab4]">
 <nav class="p-5 text-white shadow-md  bg-gradient-to-r from-[#fcb045] via-[#fd1d1d] to-[#833ab4]">
+    <!--If logged in as user-->
     {% if user.is_authenticated %}
     <a href = "{% url 'dashboard' %}" class="mr-5 hover:font-bold hover:underline hover:text-blue-300 ">Dashboard</a>
     <a href="{% url 'add_transaction' %}" class="mr-5 text-white hover:font-bold hover:underline hover:text-blue-300 ">Add Transaction</a>
