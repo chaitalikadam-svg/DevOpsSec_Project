@@ -39,7 +39,7 @@ FinTrack is a **Django** web application for tracking income and expenses, setti
 ## CI/CD Pipeline
 
 The workflow (`devsecops.yml`) is triggered by a **push to `main`** or a **merged pull request into `main`**, and runs three dependent jobs. If any stage fails, the pipeline stops and nothing is deployed.
-![Architecture Diagram](CICD.drawio)
+![Architecture Diagram](CICD.drawio.png)
 
 
 
